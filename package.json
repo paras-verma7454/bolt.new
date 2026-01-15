@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "NEXT_PUBLIC_CONVEX_URL=https://placeholder.convex.cloud next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -12,6 +12,7 @@
     "@codesandbox/sandpack-react": "^2.20.0",
     "@google/generative-ai": "^0.22.0",
     "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@react-oauth/google": "^0.12.1",
     "@types/uuid4": "^2.0.3",

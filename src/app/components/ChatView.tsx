@@ -5,11 +5,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { api } from '../../../convex/_generated/api';
 import { MessageContext } from '@/data/context/MessageContext';
 import { UserDetailContext } from '@/data/context/UserDetailContext';
+import { useModel } from '@/data/context/ModelContext';
 import Image from 'next/image';
 import { ArrowRight, Link, Loader, Loader2Icon } from 'lucide-react';
 import Lookup from '@/data/Lookup';
 import axios from 'axios';
 import Prompt from '@/data/Prompt';
+import ModelSelector from './ModelSelector';
 
 
 const ChatView = () => {
@@ -17,6 +19,7 @@ const ChatView = () => {
   const convex = useConvex();
   const { messages, setMessages } = useContext<any>(MessageContext);
   const { userDetail, setUserDetail } = useContext<any>(UserDetailContext);
+  const { selectedModel, setSelectedModel } = useModel();
   const [userInput, setUserInput] = useState('');
   const [loading, setLoading] = useState(false);
   const UpdateMessages= useMutation(api.workspace.UpdateMessages)
@@ -36,6 +39,15 @@ const ChatView = () => {
 
   const GetWorkspaceData = async () => {
     try {
+      if (!convex) {
+        console.warn("Convex not available, using local storage");
+        const savedMessages = localStorage.getItem(`workspace-${id}`);
+        if (savedMessages) {
+          setMessages(JSON.parse(savedMessages));
+        }
+        return;
+      }
+      
       const result = await convex.query(api.workspace.GetWorkspace, {
         workspaceId: id as any,
       });
@@ -59,15 +71,23 @@ const ChatView = () => {
     setLoading(true)
     const PROMPT= JSON.stringify(messages)+ Prompt.CHAT_PROMPT
     const result = await axios.post('/api/ai-chat',{
-       prompt:PROMPT
+       prompt:PROMPT,
+       modelId: selectedModel.id
     })
     const aiResponse={role:'ai',content:result.data.result}
-    setMessages((prev: any )=>[...prev,aiResponse]);
+    const newMessages = [...messages,aiResponse];
+    setMessages(newMessages);
     // console.log("ai:",result.data.result)
-    await UpdateMessages({
-      message: [...messages,aiResponse],
-      workspaceId:id as any
-    })
+    
+    // Save to Convex if available, otherwise use localStorage
+    if (UpdateMessages) {
+      await UpdateMessages({
+        message: newMessages,
+        workspaceId:id as any
+      });
+    } else {
+      localStorage.setItem(`workspace-${id}`, JSON.stringify(newMessages));
+    }
     setLoading(false)
   }
 
@@ -78,6 +98,14 @@ const ChatView = () => {
 
   return (
     <div className='relative h-[76vh] flex flex-col'>
+      {/* Model Selector */}
+      <div className='mb-4 p-3 bg-gray-50 rounded-lg border'>
+        <ModelSelector 
+          selectedModel={selectedModel} 
+          onModelChange={setSelectedModel}
+        />
+      </div>
+      
       <div className='flex-1 overflow-y-scroll no-scrollbar'>
 
       {Array.isArray(messages) && messages?.map((msg: any, index: number) => {

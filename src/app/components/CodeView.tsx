@@ -10,6 +10,7 @@ import {
 import Lookup from '@/data/Lookup';
 import axios from 'axios';
 import { MessageContext } from '@/data/context/MessageContext';
+import { useModel } from '@/data/context/ModelContext';
 import Prompt from '@/data/Prompt';
 import { useConvex, useMutation } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
@@ -21,6 +22,7 @@ const CodeView = () => {
   const [activeTab,setActiveTab]=useState('code')
   const [Files,setFiles]=useState(Lookup.DEFAULT_FILE)
   const {messages,setMessages}=useContext<any>(MessageContext)
+  const {selectedModel} = useModel()
   const [loading,setLoading]=useState(false)
   const UpdateFiles=useMutation(api.workspace.UpdateFiles)
   const convex= useConvex();
@@ -31,6 +33,14 @@ const CodeView = () => {
 
   const GetFiles=async()=>{
     setLoading(true)
+    
+    if (!convex) {
+      console.warn("Convex not available, using default files");
+      setFiles(Lookup.DEFAULT_FILE);
+      setLoading(false);
+      return;
+    }
+    
     const result= await convex.query(api.workspace.GetWorkspace,{
       workspaceId:id as any
     })
@@ -51,18 +61,25 @@ const CodeView = () => {
     setActiveTab('code')
     setLoading(true)
     const PROMPT= JSON.stringify(messages)+" "+Prompt.CODE_GEN_PROMPT
-    const result= await axios.post('https://bolt-backend-c0rp.onrender.com/ai-code',{
-      prompt: PROMPT
+    const result= await axios.post('/api/ai-code',{
+      prompt: PROMPT,
+      modelId: selectedModel.id
     })
     console.log("ai-code",result.data)
     const aiResponse=result.data
 
     const mergeFiles= {...Files,...aiResponse?.files}
     setFiles(mergeFiles)
-    await UpdateFiles({
-      workspaceId:id as any,
-      fileData:aiResponse?.files
-    })
+    
+    // Save to Convex if available, otherwise use localStorage
+    if (UpdateFiles) {
+      await UpdateFiles({
+        workspaceId:id as any,
+        fileData:aiResponse?.files
+      });
+    } else {
+      localStorage.setItem(`workspace-files-${id}`, JSON.stringify(mergeFiles));
+    }
     setLoading(false)
   }
 

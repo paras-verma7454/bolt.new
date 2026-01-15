@@ -4,7 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/app/components/theme-provider"
 import Header from "./components/Header";
 import React from "react";
-import { ConvexClientProvider } from "./components/ConvexClientProvider";
+import { ConvexWrapper } from "./components/ConvexWrapper";
+import { ModelProvider } from "@/data/context/ModelContext";
 
 export const metadata: Metadata = {
   title: "bolt.new",
@@ -22,17 +23,18 @@ export default function RootLayout({
         <link rel="shortcut icon" href="https://bolt.new/static/favicon.svg" type="image/svg+xml" />
       </head>
       <body >
-      <ConvexClientProvider>
-
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange >
-              <Header/>
-            {children}
-          </ThemeProvider>
-      </ConvexClientProvider>
+      <ConvexWrapper>
+        <ModelProvider>
+          <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange >
+                <Header/>
+              {children}
+            </ThemeProvider>
+        </ModelProvider>
+      </ConvexWrapper>
       </body>
     </html>
   );

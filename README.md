@@ -1,49 +1,128 @@
-# Bolt.new clone
-- Create React frontend with prompts [here](https://bolt-new-olive.vercel.app/)
+# Bolt New - AI-Powered Development Platform
 
-![image](https://github.com/user-attachments/assets/0ba917df-743c-42e5-85ec-5ac5b95795c4)
+A modern development platform that integrates multiple AI models for chat and code generation, built with Next.js, Convex, and Tailwind CSS.
 
-- Generating Code
-  
-> First code request might take some time because it's backend is deployed on render
-  ![image](https://github.com/user-attachments/assets/866b5702-41d7-4719-943a-6d3065b309f4)
-  
-![image](https://github.com/user-attachments/assets/6e1cb4e7-7d56-464d-b9ff-51e4ea38459c)
+## Features
 
-![image](https://github.com/user-attachments/assets/3fc2a964-13ca-4573-b739-7f44a2322b65)
+- **Multi-Model AI Support**: Choose from Google Gemini, OpenAI GPT, Anthropic Claude, Meta Llama, and Mistral models
+- **Real-time Chat**: Interactive AI chat with model selection
+- **Code Generation**: Generate React projects with Tailwind CSS
+- **Live Code Editor**: Built-in Sandpack editor with live preview
+- **Model Selection**: Dynamic dropdown to switch between AI models
+- **OpenRouter Integration**: Access to premium AI models via OpenRouter API
 
+## Supported AI Models
 
-## Getting Started
+### Google Gemini (Free)
+- Gemini 2.0 Flash
+- Gemini 1.5 Pro
 
-First, run the development server:
+### OpenRouter Models (Paid)
+- GPT-4o ($5.00/1M tokens)
+- GPT-4o Mini ($0.15/1M tokens)
+- Claude 3.5 Sonnet ($3.00/1M tokens)
+- Claude 3 Haiku ($0.25/1M tokens)
+- Llama 3.1 405B ($2.70/1M tokens)
+- Llama 3.1 70B ($0.90/1M tokens)
+- Gemini Pro 1.5 ($1.25/1M tokens)
+- Mistral 7B ($0.20/1M tokens)
+
+## Setup Instructions
+
+### 1. Clone and Install Dependencies
+
+```bash
+git clone <repository-url>
+cd bolt-new
+npm install
+```
+
+### 2. Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+# Google Gemini API Key (Required for free models)
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
+
+# OpenRouter API Key (Required for premium models)
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+
+# App URL (for OpenRouter referer header)
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Convex (if using Convex backend)
+CONVEX_DEPLOYMENT=your_convex_deployment_url
+```
+
+### 3. Get API Keys
+
+#### Google Gemini API Key
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create a new API key
+3. Add it to your `.env.local` file
+
+#### OpenRouter API Key
+1. Go to [OpenRouter](https://openrouter.ai/)
+2. Sign up and create an API key
+3. Add it to your `.env.local` file
+
+### 4. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Netlify Deployment
 
-## Learn More
+1. Connect your GitHub repository to Netlify
+2. Set the following environment variables in Netlify:
+   - `NEXT_PUBLIC_GEMINI_API_KEY`
+   - `OPENROUTER_API_KEY`
+   - `NEXT_PUBLIC_APP_URL` (set to your Netlify domain)
+3. Deploy
 
-To learn more about Next.js, take a look at the following resources:
+### Vercel Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Connect your GitHub repository to Vercel
+2. Set the environment variables in Vercel dashboard
+3. Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Usage
 
-## Deploy on Vercel
+1. **Select AI Model**: Use the dropdown in the chat interface to select your preferred AI model
+2. **Chat**: Type messages in the chat interface to interact with the selected AI model
+3. **Code Generation**: Ask the AI to generate React projects, and they will appear in the code editor
+4. **Live Preview**: Switch to preview mode to see your generated code in action
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Architecture
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Frontend**: Next.js 15 with TypeScript
+- **Styling**: Tailwind CSS
+- **AI Integration**: Google Gemini API + OpenRouter API
+- **Code Editor**: Sandpack (CodeSandbox)
+- **State Management**: React Context
+- **Backend**: Convex (optional)
+
+## API Routes
+
+- `/api/ai-chat` - Chat with AI models
+- `/api/ai-code` - Generate code with AI models
+
+Both routes support the `modelId` parameter to specify which AI model to use.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+MIT License
